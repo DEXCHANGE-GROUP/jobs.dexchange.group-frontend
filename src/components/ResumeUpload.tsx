@@ -3,17 +3,20 @@
 import { useState, useCallback } from "react";
 
 export default function ResumeUpload() {
+  const [step, setStep] = useState<'upload' | 'processing' | 'validate' | 'dashboard'>('upload');
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [showValidation, setShowValidation] = useState(false);
 
   // Mock extracted data
   const [formData, setFormData] = useState({
     firstName: "Den**", // Mock
     lastName: "**ver", // Mock
-    email: "denver@example.com", // Mock
+    email: "denver@dexchange.group", // Mock
     phone: "+221 77 000 00 00", // Mock
   });
+
+  const [npsScore, setNpsScore] = useState<number | null>(null);
+  const [npsSubmitted, setNpsSubmitted] = useState(false);
 
   const onDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -30,23 +33,25 @@ export default function ResumeUpload() {
     setIsDragging(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile.type === "application/pdf" || droppedFile.name.endsWith(".pdf")) {
-         setFile(droppedFile);
-         // Simulate parsing delay
-         setTimeout(() => setShowValidation(true), 1500);
-      } else {
-         alert("Veuillez déposer un fichier PDF.");
-      }
+      handleFile(e.dataTransfer.files[0]);
     }
   }, []);
 
   const handleManualUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files.length > 0) {
-        setFile(e.target.files[0]);
-        setTimeout(() => setShowValidation(true), 1500);
+        handleFile(e.target.files[0]);
       }
   };
+
+  const handleFile = (droppedFile: File) => {
+      if (droppedFile.type === "application/pdf" || droppedFile.name.endsWith(".pdf")) {
+         setFile(droppedFile);
+         setStep('processing');
+         setTimeout(() => setStep('validate'), 2000);
+      } else {
+         alert("Veuillez déposer un fichier PDF.");
+      }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,14 +59,25 @@ export default function ResumeUpload() {
 
   const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      alert("Candidature envoyée avec succès ! (Simulation)");
+      setStep('dashboard');
+  };
+
+  const handleNpsSubmit = () => {
+     if (npsScore !== null) {
+         setNpsSubmitted(true);
+     }
+  };
+
+  const resetProcess = () => {
       setFile(null);
-      setShowValidation(false);
+      setNpsScore(null);
+      setNpsSubmitted(false);
+      setStep('upload');
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6" id="upload-section">
-      {!showValidation ? (
+    <div className="w-full max-w-4xl mx-auto p-6" id="upload-section">
+      {step === 'upload' || step === 'processing' ? (
         <div
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
@@ -88,16 +104,17 @@ export default function ResumeUpload() {
                 type="file" 
                 accept=".pdf,application/pdf"
                 onChange={handleManualUpload}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={step === 'processing'}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                 id="file-upload"
               />
-              <button className="px-6 py-3 bg-[#0A2540] border border-[#00E0FF] text-[#00E0FF] rounded-full font-medium hover:bg-[#00E0FF] hover:text-[#0A2540] transition-colors">
+              <button disabled={step === 'processing'} className="px-6 py-3 bg-[#0A2540] border border-[#00E0FF] text-[#00E0FF] rounded-full font-medium hover:bg-[#00E0FF] hover:text-[#0A2540] transition-colors disabled:opacity-50">
                 Ou parcourez vos fichiers
               </button>
             </div>
           </div>
           
-          {file && !showValidation && (
+          {step === 'processing' && (
              <div className="mt-8 p-4 bg-[#113A64] rounded-lg animate-pulse flex items-center justify-center gap-3 text-[#00E0FF]">
                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -107,7 +124,7 @@ export default function ResumeUpload() {
              </div>
           )}
         </div>
-      ) : (
+      ) : step === 'validate' ? (
         <form onSubmit={handleSubmit} className="bg-[#113A64]/30 border border-[#113A64] p-8 rounded-2xl animate-fade-in-up">
            <div className="flex justify-between items-center mb-6 pb-6 border-b border-[#113A64]">
              <h3 className="text-2xl font-bold flex items-center gap-2">
@@ -115,7 +132,7 @@ export default function ResumeUpload() {
              </h3>
              <button 
                  type="button" 
-                 onClick={() => { setFile(null); setShowValidation(false); }}
+                 onClick={resetProcess}
                  className="text-gray-400 hover:text-white text-sm underline"
               >
                  Changer de fichier
@@ -174,11 +191,78 @@ export default function ResumeUpload() {
                    type="submit"
                    className="px-8 py-3 bg-[#00E0FF] text-[#0A2540] font-bold rounded-full hover:bg-white transition-all shadow-[0_0_15px_rgba(0,224,255,0.3)]"
                  >
-                   Confirmer & Postuler
+                   Confirmer & Découvrir mon Score
                  </button>
               </div>
            </div>
         </form>
+      ) : (
+        <div className="space-y-8 animate-fade-in-up">
+          <div className="bg-[#113A64]/30 border border-[#113A64] p-8 rounded-2xl flex flex-col md:flex-row gap-8 items-center justify-between shadow-[0_0_20px_rgba(0,224,255,0.05)]">
+             <div className="relative flex items-center justify-center w-40 h-40 rounded-full border border-[rgba(0,224,255,0.2)] bg-[#113A64]/50 shrink-0">
+               <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 160 160">
+                   <circle cx="80" cy="80" r="74" fill="transparent" stroke="#00E0FF" strokeWidth="8" strokeDasharray="465" strokeDashoffset="37" className="transition-all duration-1000 ease-out" strokeLinecap="round" />
+               </svg>
+               <div className="text-center flex flex-col items-center">
+                  <span className="text-4xl font-extrabold text-[#00E0FF] drop-shadow-[0_0_10px_rgba(0,224,255,0.4)]">92%</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Match tech</span>
+               </div>
+             </div>
+             
+             <div className="text-left flex-1 pl-4 md:border-l border-[#113A64]">
+               <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                 <span className="text-[#00E0FF]">✦</span> Rapport d'Adéquation
+               </h3>
+               <div className="bg-[#0A2540]/80 p-5 rounded-xl border border-[#113A64] mb-2">
+                 <strong className="text-white block mb-2">Pourquoi ce score ?</strong>
+                 <p className="text-gray-300 text-sm leading-relaxed">
+                   Vos compétences extraites (React, Node.js, Typescript) matchent remarquablement avec le profil métier recherché. La structure globale suggère une aisance à s'adapter aux squads de paiement mobile DEXCHANGE.
+                 </p>
+               </div>
+             </div>
+          </div>
+
+          <div className="bg-[#0A2540] border border-[#00E0FF]/30 p-8 rounded-2xl text-center shadow-[0_0_30px_rgba(0,224,255,0.1)] relative overflow-hidden">
+             <div className="absolute inset-0 bg-gradient-to-b from-[#00E0FF]/5 to-transparent pointer-events-none"></div>
+             {!npsSubmitted ? (
+               <div className="relative z-10">
+                 <h4 className="text-xl font-bold mb-2">Votre avis compte pour nous</h4>
+                 <p className="text-gray-400 mb-8 max-w-lg mx-auto text-sm">Sur une échelle de 0 à 10, dans quelle mesure recommanderiez-vous ce parcours de candidature tech à un développeur de votre réseau ?</p>
+                 <div className="flex flex-wrap justify-center gap-1.5 md:gap-3 mb-8">
+                    {[0,1,2,3,4,5,6,7,8,9,10].map(score => (
+                      <button
+                        key={score}
+                        onClick={() => setNpsScore(score)}
+                        className={`w-10 h-10 md:w-12 md:h-12 rounded-lg font-bold transition-all duration-200 ${
+                          npsScore === score 
+                            ? "bg-[#00E0FF] text-[#0A2540] scale-110 shadow-[0_0_15px_rgba(0,224,255,0.5)] border border-transparent" 
+                            : "bg-[#113A64]/50 border border-[#113A64] text-gray-300 hover:bg-[#00E0FF]/10 hover:border-[#00E0FF]/50 hover:text-[#00E0FF]"
+                        }`}
+                      >
+                        {score}
+                      </button>
+                    ))}
+                 </div>
+                 <button 
+                   onClick={handleNpsSubmit}
+                   disabled={npsScore === null}
+                   className="px-8 py-3 bg-[#00E0FF] text-[#0A2540] font-bold rounded-full hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,224,255,0.2)]"
+                 >
+                   Envoyer mon avis (30s)
+                 </button>
+               </div>
+             ) : (
+               <div className="py-8 animate-fade-in-up relative z-10">
+                 <div className="text-[#00E0FF] text-6xl mb-4 drop-shadow-[0_0_15px_rgba(0,224,255,0.4)]">✓</div>
+                 <h4 className="text-2xl font-bold mb-2">Merci pour votre retour !</h4>
+                 <p className="text-gray-400 mb-8 max-w-md mx-auto">Votre dossier est maintenant entre les mains de l'équipe Recrutement DEXCHANGE. Vous serez recontacté(e) d'ici 48h ouvrées.</p>
+                 <button onClick={resetProcess} className="text-[#00E0FF] hover:text-white transition-colors underline font-medium">
+                   Déposer le CV d'un nouveau candidat potentiel
+                 </button>
+               </div>
+             )}
+          </div>
+        </div>
       )}
     </div>
   );
