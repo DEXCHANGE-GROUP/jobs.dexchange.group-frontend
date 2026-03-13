@@ -6,10 +6,17 @@ import { api } from "@/lib/api";
 import { JOB_TYPE_LABELS } from "@/lib/types";
 import type { Job } from "@/lib/types";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
+
 async function getRecentJobs(): Promise<Job[]> {
   try {
-    const res = await api.jobs.list({ status: "published", limit: 6, sortBy: "createdAt", sortOrder: "desc" });
-    return res.data;
+    const res = await fetch(
+      `${API_BASE}/jobs?status=published&limit=6&sortBy=createdAt&sortOrder=desc`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.data || [];
   } catch {
     return [];
   }
