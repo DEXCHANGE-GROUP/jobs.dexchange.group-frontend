@@ -9,8 +9,8 @@ export default function ResumeUpload() {
 
   // Mock extracted data
   const [formData, setFormData] = useState({
-    firstName: "Den**", // Mock
-    lastName: "**ver", // Mock
+    firstName: "Denver", // Mock
+    lastName: "**", // Mock
     email: "denver@dexchange.group", // Mock
     phone: "+221 77 000 00 00", // Mock
   });
@@ -47,9 +47,9 @@ export default function ResumeUpload() {
       if (droppedFile.type === "application/pdf" || droppedFile.name.endsWith(".pdf")) {
          setFile(droppedFile);
          setStep('processing');
-         setTimeout(() => setStep('validate'), 2000);
+         setTimeout(() => setStep('validate'), 2200);
       } else {
-         alert("Veuillez déposer un fichier PDF.");
+         alert("Format non autorisé. Les systèmes DEXCHANGE n'acceptent que le PDF.");
       }
   }
 
@@ -76,167 +76,196 @@ export default function ResumeUpload() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6" id="upload-section">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-8 relative" id="upload-section">
       {step === 'upload' || step === 'processing' ? (
         <div
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           onDrop={onDrop}
-          className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
+          className={`relative border-2 border-dashed rounded-3xl p-10 sm:p-16 text-center transition-all duration-500 glass-panel ${
             isDragging 
-              ? "border-[#00E0FF] bg-[#00E0FF]/10 scale-[1.02]" 
-              : "border-[#113A64] bg-[#0A2540]/50 hover:bg-[#113A64]/30 hover:border-[#00E0FF]/50"
+              ? "border-[#00E0FF] bg-[#00E0FF]/15 scale-[1.03] shadow-[0_0_30px_rgba(0,224,255,0.3)]" 
+              : "border-[#113A64]/80 bg-[#0A2540]/30 hover:bg-[#113A64]/40 hover:border-[#00E0FF]/60"
           }`}
         >
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className={`p-4 rounded-full ${isDragging ? 'bg-[#00E0FF]/20 text-[#00E0FF]' : 'bg-[#113A64] text-[#00E0FF]/70'}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          <div className="flex flex-col items-center justify-center space-y-6 relative z-10">
+            <div className={`p-6 rounded-2xl backdrop-blur-md transition-all duration-300 ${isDragging ? 'bg-[#00E0FF]/25 text-[#00E0FF] shadow-[0_0_20px_rgba(0,224,255,0.5)]' : 'bg-[#113A64]/60 text-[#00E0FF]/80 border border-[#113A64]'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
-            <div>
-               <h3 className="text-xl font-semibold mb-2">Déposez votre CV ici</h3>
-               <p className="text-gray-400 text-sm mb-6">Format supporté: PDF (Max 5MB)</p>
+            <div className="space-y-2">
+               <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white drop-shadow-md">Initialiser l'Upload DEXCHANGE</h3>
+               <p className="text-gray-400 text-sm sm:text-base mb-8 max-w-md mx-auto">Glissez le CV (Systèmes supportés: PDF Max 5MB). L'IA d"analyse s'occupe du reste.</p>
             </div>
             
-            <div className="relative">
+            <div className="relative group">
               <input 
                 type="file" 
                 accept=".pdf,application/pdf"
                 onChange={handleManualUpload}
                 disabled={step === 'processing'}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-20"
                 id="file-upload"
               />
-              <button disabled={step === 'processing'} className="px-6 py-3 bg-[#0A2540] border border-[#00E0FF] text-[#00E0FF] rounded-full font-medium hover:bg-[#00E0FF] hover:text-[#0A2540] transition-colors disabled:opacity-50">
-                Ou parcourez vos fichiers
+              <button disabled={step === 'processing'} className="relative z-10 px-8 py-4 bg-transparent border-2 border-[#00E0FF] text-[#00E0FF] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#00E0FF] hover:text-[#0A2540] transition-all duration-300 disabled:opacity-50 hover:shadow-[0_0_20px_rgba(0,224,255,0.4)]">
+                Localiser le fichier
               </button>
             </div>
           </div>
           
           {step === 'processing' && (
-             <div className="mt-8 p-4 bg-[#113A64] rounded-lg animate-pulse flex items-center justify-center gap-3 text-[#00E0FF]">
-                 <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                 </svg>
-                 Analyse du CV par l'IA DEXCHANGE...
+             <div className="absolute inset-0 bg-[#0A2540]/90 backdrop-blur-xl rounded-2xl flex flex-col items-center justify-center space-y-6 z-50 transition-opacity animate-fade-in-up border border-[#00E0FF]/30">
+                 <div className="relative w-20 h-20">
+                    <div className="absolute inset-0 rounded-full border-t-4 border-[#00E0FF] animate-spin"></div>
+                    <div className="absolute inset-2 rounded-full border-r-4 border-[#00E0FF]/60 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+                    <svg className="absolute inset-0 w-8 h-8 m-auto text-[#00E0FF]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                 </div>
+                 <div className="text-center">
+                    <h4 className="text-[#00E0FF] text-xl font-bold tracking-widest uppercase shadow-[0_0_10px_rgba(0,224,255,0.2)]">Analyse Core System...</h4>
+                    <p className="text-gray-400 mt-2 font-mono text-sm max-w-xs mx-auto">Extraction des vecteurs de compétences et mapping des données DEXCHANGE AI.</p>
+                 </div>
              </div>
           )}
         </div>
       ) : step === 'validate' ? (
-        <form onSubmit={handleSubmit} className="bg-[#113A64]/30 border border-[#113A64] p-8 rounded-2xl animate-fade-in-up">
-           <div className="flex justify-between items-center mb-6 pb-6 border-b border-[#113A64]">
-             <h3 className="text-2xl font-bold flex items-center gap-2">
-                 <span className="text-[#00E0FF]">✓</span> CV Analysé
-             </h3>
+        <form onSubmit={handleSubmit} className="glass-panel p-8 sm:p-12 animate-fade-in-up relative overflow-hidden">
+           <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#00E0FF] rounded-full mix-blend-screen mix-blend-color-dodge opacity-10 filter blur-[80px] pointer-events-none"></div>
+
+           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 pb-6 border-b border-[rgba(0,224,255,0.1)] gap-4">
+             <div className="flex items-center gap-4">
+                 <div className="w-12 h-12 rounded-full bg-[#00E0FF]/10 flex items-center justify-center border border-[#00E0FF]/30">
+                    <span className="text-[#00E0FF] text-xl">✓</span>
+                 </div>
+                 <div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Paramètres Candidat</h3>
+                    <p className="text-gray-400 text-sm mt-1">Données extraites avec succès. Vérifiez l'intégrité.</p>
+                 </div>
+             </div>
              <button 
                  type="button" 
                  onClick={resetProcess}
-                 className="text-gray-400 hover:text-white text-sm underline"
+                 className="text-gray-400 hover:text-[#00E0FF] text-sm uppercase tracking-wider font-semibold underline underline-offset-4 transition-colors p-2 rounded-lg hover:bg-[#00E0FF]/10"
               >
-                 Changer de fichier
+                 Changer la source
              </button>
            </div>
 
-           <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="space-y-2">
-                    <label className="text-sm text-gray-400 font-medium">Prénom</label>
+           <div className="space-y-8 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                 <div className="space-y-3">
+                    <label className="text-xs text-gray-400 font-bold uppercase tracking-widest pl-1">Prénom / First Name</label>
                     <input 
                       type="text" 
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className="w-full bg-[#0A2540] border border-[#113A64] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E0FF] transition-colors"
+                      className="w-full glass-input rounded-xl px-5 py-4 text-white text-lg transition-all focus:scale-[1.01]"
                       required
                     />
                  </div>
-                 <div className="space-y-2">
-                    <label className="text-sm text-gray-400 font-medium">Nom</label>
+                 <div className="space-y-3">
+                    <label className="text-xs text-gray-400 font-bold uppercase tracking-widest pl-1">Nom / Last Name</label>
                     <input 
                       type="text" 
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className="w-full bg-[#0A2540] border border-[#113A64] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E0FF] transition-colors"
+                      className="w-full glass-input rounded-xl px-5 py-4 text-white text-lg transition-all focus:scale-[1.01]"
                       required
                     />
                  </div>
-                 <div className="space-y-2">
-                    <label className="text-sm text-gray-400 font-medium">Email</label>
+                 <div className="space-y-3 md:col-span-2 lg:col-span-1">
+                    <label className="text-xs text-gray-400 font-bold uppercase tracking-widest pl-1">ID Utilisateur / Email</label>
                     <input 
                       type="email" 
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full bg-[#0A2540] border border-[#113A64] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E0FF] transition-colors"
+                      className="w-full glass-input rounded-xl px-5 py-4 text-white text-lg font-mono transition-all focus:scale-[1.01]"
                       required
                     />
                  </div>
-                 <div className="space-y-2">
-                    <label className="text-sm text-gray-400 font-medium">Téléphone</label>
+                 <div className="space-y-3 md:col-span-2 lg:col-span-1">
+                    <label className="text-xs text-gray-400 font-bold uppercase tracking-widest pl-1">Contact Réseau</label>
                     <input 
                       type="tel" 
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full bg-[#0A2540] border border-[#113A64] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E0FF] transition-colors"
+                      className="w-full glass-input rounded-xl px-5 py-4 text-white text-lg font-mono transition-all focus:scale-[1.01]"
                     />
                  </div>
               </div>
               
-              <div className="pt-6 flex justify-end gap-4">
+              <div className="pt-8 flex flex-col sm:flex-row justify-end gap-6 items-center border-t border-[rgba(0,224,255,0.1)]">
+                 <span className="text-xs text-gray-500 font-mono tracking-widest uppercase">Connexion Sécurisée AES-256</span>
                  <button 
                    type="submit"
-                   className="px-8 py-3 bg-[#00E0FF] text-[#0A2540] font-bold rounded-full hover:bg-white transition-all shadow-[0_0_15px_rgba(0,224,255,0.3)]"
+                   className="w-full sm:w-auto px-10 py-4 primary-button rounded-xl font-bold text-lg uppercase tracking-wider flex items-center justify-center gap-3"
                  >
-                   Confirmer & Découvrir mon Score
+                   Analyser le Match <span className="text-xl">→</span>
                  </button>
               </div>
            </div>
         </form>
       ) : (
         <div className="space-y-8 animate-fade-in-up">
-          <div className="bg-[#113A64]/30 border border-[#113A64] p-8 rounded-2xl flex flex-col md:flex-row gap-8 items-center justify-between shadow-[0_0_20px_rgba(0,224,255,0.05)]">
-             <div className="relative flex items-center justify-center w-40 h-40 rounded-full border border-[rgba(0,224,255,0.2)] bg-[#113A64]/50 shrink-0">
-               <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 160 160">
-                   <circle cx="80" cy="80" r="74" fill="transparent" stroke="#00E0FF" strokeWidth="8" strokeDasharray="465" strokeDashoffset="37" className="transition-all duration-1000 ease-out" strokeLinecap="round" />
+          <div className="glass-panel p-8 sm:p-12 flex flex-col lg:flex-row gap-12 items-center justify-between relative overflow-hidden">
+             
+             {/* Circular Progress High-Tech */}
+             <div className="relative flex items-center justify-center w-56 h-56 rounded-full shrink-0 group">
+               <div className="absolute inset-0 bg-[#00E0FF]/10 rounded-full blur-2xl group-hover:bg-[#00E0FF]/25 transition-all duration-1000"></div>
+               <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none drop-shadow-[0_0_15px_rgba(0,224,255,0.3)]" viewBox="0 0 200 200">
+                   <circle cx="100" cy="100" r="92" fill="rgba(10,37,64,0.5)" stroke="rgba(17,58,100,1)" strokeWidth="6" />
+                   <circle cx="100" cy="100" r="92" fill="transparent" stroke="url(#gradient)" strokeWidth="6" strokeDasharray="578" strokeDashoffset="46" className="transition-all duration-[2000ms] ease-out shadow-neon" strokeLinecap="round" />
+                   <defs>
+                     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                       <stop offset="0%" stopColor="#00E0FF" />
+                       <stop offset="100%" stopColor="#0088CC" />
+                     </linearGradient>
+                   </defs>
                </svg>
-               <div className="text-center flex flex-col items-center">
-                  <span className="text-4xl font-extrabold text-[#00E0FF] drop-shadow-[0_0_10px_rgba(0,224,255,0.4)]">92%</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Match tech</span>
+               <div className="text-center flex flex-col items-center z-10">
+                  <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-[#00E0FF] drop-shadow-[0_0_10px_rgba(0,224,255,0.6)] tracking-tighter">92%</span>
+                  <span className="text-xs text-[#00E0FF] font-black uppercase tracking-[0.3em] mt-2 shadow-black drop-shadow-md">Score DEX</span>
                </div>
              </div>
              
-             <div className="text-left flex-1 pl-4 md:border-l border-[#113A64]">
-               <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                 <span className="text-[#00E0FF]">✦</span> Rapport d'Adéquation
+             <div className="text-left flex-1 lg:pl-10 space-y-6">
+               <h3 className="text-3xl sm:text-4xl font-black mb-2 tracking-tight">
+                 Rapport d'Adéquation Tech
                </h3>
-               <div className="bg-[#0A2540]/80 p-5 rounded-xl border border-[#113A64] mb-2">
-                 <strong className="text-white block mb-2">Pourquoi ce score ?</strong>
-                 <p className="text-gray-300 text-sm leading-relaxed">
-                   Vos compétences extraites (React, Node.js, Typescript) matchent remarquablement avec le profil métier recherché. La structure globale suggère une aisance à s'adapter aux squads de paiement mobile DEXCHANGE.
+               <div className="bg-[#0A2540]/60 p-6 rounded-2xl border border-[rgba(0,224,255,0.15)] backdrop-blur-md shadow-inner">
+                 <strong className="text-[#00E0FF] text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[#00E0FF] rounded-full animate-pulse"></span>
+                    Analyse Data Driven
+                 </strong>
+                 <p className="text-gray-300 text-base leading-relaxed">
+                   Vos vecteurs de compétences extraits matchent à un niveau remarquable avec l'infrastructure DEXCHANGE GROUP. Votre expertise technique souligne une excellente capacité à scaler nos systèmes de paiements B2B haute disponibilité.
                  </p>
                </div>
              </div>
           </div>
 
-          <div className="bg-[#0A2540] border border-[#00E0FF]/30 p-8 rounded-2xl text-center shadow-[0_0_30px_rgba(0,224,255,0.1)] relative overflow-hidden">
-             <div className="absolute inset-0 bg-gradient-to-b from-[#00E0FF]/5 to-transparent pointer-events-none"></div>
+          <div className="glass-panel p-10 sm:p-14 text-center relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00E0FF]/50 to-transparent"></div>
+             
              {!npsSubmitted ? (
-               <div className="relative z-10">
-                 <h4 className="text-xl font-bold mb-2">Votre avis compte pour nous</h4>
-                 <p className="text-gray-400 mb-8 max-w-lg mx-auto text-sm">Sur une échelle de 0 à 10, dans quelle mesure recommanderiez-vous ce parcours de candidature tech à un développeur de votre réseau ?</p>
-                 <div className="flex flex-wrap justify-center gap-1.5 md:gap-3 mb-8">
+               <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
+                 <h4 className="text-3xl font-black mb-4 tracking-tight">Candidature Sécurisée</h4>
+                 <p className="text-gray-400 mb-10 text-lg">Sur une échelle de 0 à 10, dans quelle mesure recommanderiez-vous ce parcours UX/tech à un pair développeur ?</p>
+                 <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10">
                     {[0,1,2,3,4,5,6,7,8,9,10].map(score => (
                       <button
                         key={score}
                         onClick={() => setNpsScore(score)}
-                        className={`w-10 h-10 md:w-12 md:h-12 rounded-lg font-bold transition-all duration-200 ${
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl font-bold text-lg sm:text-xl transition-all duration-300 ${
                           npsScore === score 
-                            ? "bg-[#00E0FF] text-[#0A2540] scale-110 shadow-[0_0_15px_rgba(0,224,255,0.5)] border border-transparent" 
-                            : "bg-[#113A64]/50 border border-[#113A64] text-gray-300 hover:bg-[#00E0FF]/10 hover:border-[#00E0FF]/50 hover:text-[#00E0FF]"
+                            ? "primary-button text-[#0A2540] scale-[1.15]" 
+                            : "glass-input text-gray-300 hover:bg-[#113A64]/80 hover:border-[#00E0FF]/50 hover:text-[#00E0FF] hover:-translate-y-1"
                         }`}
                       >
                         {score}
@@ -246,18 +275,22 @@ export default function ResumeUpload() {
                  <button 
                    onClick={handleNpsSubmit}
                    disabled={npsScore === null}
-                   className="px-8 py-3 bg-[#00E0FF] text-[#0A2540] font-bold rounded-full hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,224,255,0.2)]"
+                   className="px-12 py-5 bg-white text-[#0A2540] font-black rounded-xl uppercase tracking-widest hover:bg-[#00E0FF] hover:text-[#0A2540] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base border border-transparent disabled:hover:border-transparent hover:shadow-[0_0_30px_rgba(0,224,255,0.4)]"
                  >
-                   Envoyer mon avis (30s)
+                   Envoyer le Télémètre (30s)
                  </button>
                </div>
              ) : (
-               <div className="py-8 animate-fade-in-up relative z-10">
-                 <div className="text-[#00E0FF] text-6xl mb-4 drop-shadow-[0_0_15px_rgba(0,224,255,0.4)]">✓</div>
-                 <h4 className="text-2xl font-bold mb-2">Merci pour votre retour !</h4>
-                 <p className="text-gray-400 mb-8 max-w-md mx-auto">Votre dossier est maintenant entre les mains de l'équipe Recrutement DEXCHANGE. Vous serez recontacté(e) d'ici 48h ouvrées.</p>
-                 <button onClick={resetProcess} className="text-[#00E0FF] hover:text-white transition-colors underline font-medium">
-                   Déposer le CV d'un nouveau candidat potentiel
+               <div className="py-12 animate-fade-in-up relative z-10 flex flex-col items-center">
+                 <div className="w-24 h-24 bg-[#00E0FF]/10 rounded-full border border-[#00E0FF]/30 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,224,255,0.3)] text-[#00E0FF]">
+                     <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                     </svg>
+                 </div>
+                 <h4 className="text-3xl font-black mb-4 tracking-tight">Télémétrie Reçue.</h4>
+                 <p className="text-gray-400 text-lg mb-10 max-w-lg mx-auto">Payload envoyé aux serveurs RH DEXCHANGE. Temps de réponse est estimé à 48h ouvrées. Préparez-vous à disrupter.</p>
+                 <button onClick={resetProcess} className="secondary-button px-8 py-3 rounded-xl uppercase tracking-widest text-sm font-bold">
+                   Initialiser nouvelle session
                  </button>
                </div>
              )}

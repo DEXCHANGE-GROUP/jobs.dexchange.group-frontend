@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-dark: #0A2540;
+  --color-surface: rgba(17, 58, 100, 0.4);
+  --color-surface-hover: rgba(17, 58, 100, 0.7);
+  --color-border: rgba(0, 224, 255, 0.2);
+  --color-primary: #00E0FF;
+  --color-primary-glow: rgba(0, 224, 255, 0.5);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-dark);
+  color: #F1F5F9;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Base Animations */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--color-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 1.5rem;
+}
+
+.glass-panel-hover:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 20px var(--color-primary-glow);
+  transform: translateY(-2px);
+}
+
+.glass-input {
+  background: rgba(10, 37, 64, 0.6) !important;
+  border: 1px solid rgba(17, 58, 100, 0.8) !important;
+  color: #fff !important;
+}
+
+.glass-input:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 10px rgba(0, 224, 255, 0.2) !important;
+  outline: none;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #00E0FF 0%, #0099ff 100%);
+  color: #0A2540;
+  box-shadow: 0 0 20px rgba(0, 224, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.primary-button:hover {
+  box-shadow: 0 0 30px rgba(0, 224, 255, 0.6);
+  transform: scale(1.02);
+}
+
+.secondary-button {
+  background: rgba(17, 58, 100, 0.5);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+  background: rgba(0, 224, 255, 0.1);
+  box-shadow: inset 0 0 10px rgba(0, 224, 255, 0.2);
+}
+
+/* Animated Grid Background */
+.bg-grid {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(0, 224, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 224, 255, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, black, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black, transparent);
 }
