@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -16,9 +17,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xs">DX</span>
-          </div>
+          <Image src="/dexchange-logo.png" alt="DEXCHANGE" width={32} height={32} className="rounded-lg" />
           <span className="font-bold text-dark text-sm">
             DEXCHANGE <span className="text-gray-400 font-normal">JOBS</span>
           </span>

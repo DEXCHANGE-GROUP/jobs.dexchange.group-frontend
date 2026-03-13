@@ -7,6 +7,10 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 export const metadata: Metadata = {
   title: "Carrieres — DEXCHANGE GROUP",
   description: "Rejoignez DEXCHANGE GROUP. Decouvrez nos offres d'emploi dans la fintech, la finance, le marketing, les operations et plus encore.",
+  icons: {
+    icon: "/dexchange-logo.png",
+    apple: "/dexchange-logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

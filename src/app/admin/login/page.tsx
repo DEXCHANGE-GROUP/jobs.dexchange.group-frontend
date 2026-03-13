@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { setToken } from "@/lib/auth";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1";
@@ -88,9 +89,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-surface flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-sm">DX</span>
-          </div>
+          <Image src="/dexchange-logo.png" alt="DEXCHANGE" width={48} height={48} className="rounded-xl mx-auto mb-4" />
           <h1 className="text-lg font-bold text-dark">
             {needsSetup ? "Configuration initiale" : "Espace RH"}
           </h1>

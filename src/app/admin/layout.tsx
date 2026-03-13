@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { removeToken } from "@/lib/auth";
@@ -33,9 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-60 bg-white border-r border-border flex-col shrink-0 hidden lg:flex">
         <div className="p-5 border-b border-border">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xs">DX</span>
-            </div>
+            <Image src="/dexchange-logo.png" alt="DEXCHANGE" width={32} height={32} className="rounded-lg" />
             <div>
               <span className="font-bold text-dark text-sm block leading-tight">DEXCHANGE</span>
               <span className="text-[10px] text-gray-400 uppercase tracking-wider">Espace RH</span>
@@ -88,9 +87,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-border">
         <div className="px-4 h-14 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-[10px]">DX</span>
-            </div>
+            <Image src="/dexchange-logo.png" alt="DEXCHANGE" width={28} height={28} className="rounded-md" />
             <span className="text-xs font-bold text-dark">Espace RH</span>
           </Link>
           <button onClick={() => setMobileOpen(!mobileOpen)} className="text-gray-400 p-1">

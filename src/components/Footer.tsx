@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -7,9 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-sm">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-white font-bold text-[10px]">DX</span>
-              </div>
+              <Image src="/dexchange-logo.png" alt="DEXCHANGE" width={28} height={28} className="rounded-md" />
               <span className="font-bold text-dark text-sm">DEXCHANGE GROUP</span>
             </div>
             <p className="text-gray-500 text-xs leading-relaxed">
