@@ -29,7 +29,8 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   try { job = await api.jobs.get(id); } catch { notFound(); }
 
   const salary = formatSalary(job.salary);
-  const isExpired = job.expiresAt ? new Date(job.expiresAt) < new Date() : false;
+  const isClosed = job.status === "closed";
+  const isExpired = isClosed || (job.expiresAt ? new Date(job.expiresAt) < new Date() : false);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -135,7 +136,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
                     Dépôt clôturé
                   </div>
                   <p className="text-xs text-red-500 mt-3 text-center">
-                    La date limite de dépôt est dépassée ({new Date(job.expiresAt!).toLocaleDateString("fr-FR")}).
+                    {isClosed ? "Cette offre n'accepte plus de candidatures." : `La date limite de dépôt est dépassée (${new Date(job.expiresAt!).toLocaleDateString("fr-FR")}).`}
                   </p>
                 </>
               ) : (
@@ -201,7 +202,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
               <h3 className="text-sm font-semibold text-dark mb-2">{job.company}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 Infrastructure de paiement et de services digitaux pour l&apos;Afrique.
-                Présent au Sénégal, en Côte d&apos;Ivoire, au Bénin, au Cameroun, en Guinée et au Togo.
+                Présent au Sénégal, au Cameroun, en Côte d&apos;Ivoire et en Guinée.
               </p>
               <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border text-xs text-gray-400">
                 <span>{job.views} vues</span>

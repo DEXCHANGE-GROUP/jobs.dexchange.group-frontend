@@ -119,7 +119,8 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
     </div>
   );
 
-  const isExpired = job.expiresAt ? new Date(job.expiresAt) < new Date() : false;
+  const isClosed = job.status === "closed";
+  const isExpired = isClosed || (job.expiresAt ? new Date(job.expiresAt) < new Date() : false);
 
   if (isExpired) return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -133,8 +134,10 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
           </div>
           <h2 className="text-xl font-bold text-dark mb-2">Dépôt clôturé</h2>
           <p className="text-gray-500 text-sm mb-6">
-            La date limite de dépôt pour le poste de <strong>{job.title}</strong> est dépassée
-            (le {new Date(job.expiresAt!).toLocaleDateString("fr-FR")}).
+            {isClosed
+              ? <>Cette offre pour le poste de <strong>{job.title}</strong> n&apos;accepte plus de candidatures.</>
+              : <>La date limite de dépôt pour le poste de <strong>{job.title}</strong> est dépassée (le {new Date(job.expiresAt!).toLocaleDateString("fr-FR")}).</>
+            }
           </p>
           <div className="flex justify-center gap-3">
             <Link href="/jobs" className="px-5 py-2.5 border border-border rounded-lg text-sm text-gray-500 hover:text-primary transition-colors">

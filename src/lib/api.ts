@@ -44,6 +44,8 @@ export const api = {
       request<Job>(`/jobs/${id}/publish`, { method: 'PATCH' }),
     close: (id: string) =>
       request<Job>(`/jobs/${id}/close`, { method: 'PATCH' }),
+    reopen: (id: string) =>
+      request<Job>(`/jobs/${id}/reopen`, { method: 'PATCH' }),
   },
 
   candidates: {

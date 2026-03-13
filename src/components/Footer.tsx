@@ -25,9 +25,8 @@ export default function Footer() {
           <div>
             <p className="text-xs font-semibold text-dark mb-3">Présence</p>
             <ul className="space-y-1.5 text-gray-500 text-xs">
-              <li>Sénégal · Côte d&apos;Ivoire</li>
-              <li>Bénin · Cameroun</li>
-              <li>Guinée · Togo</li>
+              <li>Sénégal · Cameroun</li>
+              <li>Côte d&apos;Ivoire · Guinée</li>
             </ul>
           </div>
           <div>

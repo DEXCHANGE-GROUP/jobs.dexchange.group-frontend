@@ -149,6 +149,16 @@ export default function AdminJobsPage() {
                               Fermer
                             </button>
                           )}
+                          {job.status === "closed" && (
+                            <button onClick={async () => { await api.jobs.reopen(job._id); fetchJobs(); }}
+                              className="px-2.5 py-1.5 text-xs font-medium text-green-600 bg-green-50 rounded-md hover:bg-green-100 transition-colors">
+                              Réouvrir
+                            </button>
+                          )}
+                          <Link href={`/admin/jobs/${job._id}/edit`}
+                            className="px-2.5 py-1.5 text-xs font-medium text-primary bg-primary/5 rounded-md hover:bg-primary/10 transition-colors">
+                            Modifier
+                          </Link>
                           <button onClick={async () => { if (confirm("Supprimer cette offre ?")) { await api.jobs.remove(job._id); fetchJobs(); } }}
                             className="px-2.5 py-1.5 text-xs font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100 transition-colors">
                             Supprimer

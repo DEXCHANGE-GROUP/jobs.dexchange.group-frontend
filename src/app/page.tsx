@@ -44,7 +44,7 @@ const ADVANTAGES = [
   },
   {
     title: "Impact & mission",
-    desc: "Contribuez à transformer l'infrastructure financière africaine. Votre travail a un impact concret sur des millions de personnes dans 6 pays.",
+    desc: "Contribuez à transformer l'infrastructure financière africaine. Votre travail a un impact concret sur des millions de personnes dans 4 pays.",
   },
 ];
 
@@ -63,10 +63,34 @@ export default async function HomePage() {
           </h1>
           <p className="text-lg text-gray-500 mt-4 max-w-2xl leading-relaxed">
             Rejoignez l&apos;équipe qui construit l&apos;infrastructure fintech
-            de référence en Afrique. Présents dans 6 pays, nous recrutons
-            des talents dans tous les domaines.
+            de référence en Afrique. Présents au Sénégal, au Cameroun,
+            en Côte d&apos;Ivoire et en Guinée, nous recrutons des talents
+            dans tous les domaines.
           </p>
           <HeroSearch />
+
+          {/* Quick job links */}
+          {jobs.length > 0 && (
+            <div className="mt-8">
+              <p className="text-xs text-gray-400 mb-3">Offres du moment</p>
+              <div className="flex flex-wrap gap-2">
+                {jobs.slice(0, 4).map((job) => (
+                  <Link
+                    key={job._id}
+                    href={`/jobs/${job._id}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-border rounded-lg text-sm hover:border-primary/40 transition-colors group"
+                  >
+                    <span className="font-medium text-dark group-hover:text-primary transition-colors">{job.title}</span>
+                    <span className="text-gray-400">&middot;</span>
+                    <span className="text-xs text-gray-400">{job.location}</span>
+                    <svg className="w-3.5 h-3.5 text-gray-300 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
