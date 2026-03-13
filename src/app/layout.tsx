@@ -5,8 +5,8 @@ import "./globals.css";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
-  title: "DEXCHANGE JOBS — Recrutement | Infrastructure financiere pour l'Afrique",
-  description: "Rejoignez DEXCHANGE GROUP : paiements, APIs, Mobile Money, ERP, KYC. Nous recrutons dans 6 pays africains. Consultez nos offres.",
+  title: "Carrieres — DEXCHANGE GROUP",
+  description: "Rejoignez DEXCHANGE GROUP. Decouvrez nos offres d'emploi dans la fintech, la finance, le marketing, les operations et plus encore.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
