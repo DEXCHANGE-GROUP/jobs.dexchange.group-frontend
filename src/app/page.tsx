@@ -1,3 +1,5 @@
+import ResumeUpload from "@/components/ResumeUpload";
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#0A2540] text-white font-sans">
@@ -19,10 +21,8 @@ export default function Home() {
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
              Construisez l'avenir des paiements et du mobile money avec DEXCHANGE GROUP.
           </p>
-          <div className="pt-8">
-             <a href="#jobs" className="px-8 py-4 bg-[#00E0FF] text-[#0A2540] font-bold rounded-full hover:bg-white transition-all transform hover:scale-105 inline-block shadow-[0_0_20px_rgba(0,224,255,0.4)]">
-               Voir les offres ouvertes
-             </a>
+          <div className="pt-8 w-full max-w-4xl mx-auto">
+             <ResumeUpload />
           </div>
         </section>
       </main>
