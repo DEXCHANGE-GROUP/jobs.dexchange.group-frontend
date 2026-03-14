@@ -67,8 +67,8 @@ export const api = {
   },
 
   upload: {
-    getSignedUrl: (key: string) =>
-      request<{ url: string }>(`/upload/signed-url?key=${encodeURIComponent(key)}`),
+    getSignedUrl: (key: string, inline = false) =>
+      request<{ url: string }>(`/upload/signed-url?key=${encodeURIComponent(key)}${inline ? '&inline=1' : ''}`),
   },
 
   applications: {
