@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
+import { api, s3KeyFromUrl } from "@/lib/api";
 import { APPLICATION_STATUS_LABELS, JOB_TYPE_LABELS } from "@/lib/types";
 import type { Application, Job, Candidate } from "@/lib/types";
 
@@ -14,9 +14,15 @@ export default function ApplicationDetailPage({ params }: { params: Promise<{ id
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [comment, setComment] = useState("");
+  const [cvUrl, setCvUrl] = useState("");
 
   useEffect(() => {
-    api.applications.get(id).then(setApp).catch(() => setApp(null)).finally(() => setLoading(false));
+    api.applications.get(id).then((a) => {
+      setApp(a);
+      if (a.resumeUrl) {
+        api.upload.getSignedUrl(s3KeyFromUrl(a.resumeUrl)).then((r) => setCvUrl(r.url)).catch(() => {});
+      }
+    }).catch(() => setApp(null)).finally(() => setLoading(false));
   }, [id]);
 
   const handleStatusChange = async (newStatus: string) => {
@@ -121,12 +127,12 @@ export default function ApplicationDetailPage({ params }: { params: Promise<{ id
                         <span className="text-gray-600">{cand.location}</span>
                       </div>
                     )}
-                    {cand.resumeUrl && (
+                    {cand.resumeUrl && cvUrl && (
                       <div className="flex items-center gap-2">
                         <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                         </svg>
-                        <span className="text-gray-600 truncate">CV : {cand.resumeUrl}</span>
+                        <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">Voir le CV</a>
                       </div>
                     )}
                   </div>
@@ -156,18 +162,38 @@ export default function ApplicationDetailPage({ params }: { params: Promise<{ id
           {/* CV joint */}
           {app.resumeUrl && (
             <div className="bg-white border border-border rounded-xl p-6">
-              <h2 className="text-sm font-semibold text-dark pb-3 border-b border-border mb-4">CV joint à la candidature</h2>
-              <div className="flex items-center gap-3 p-3 bg-surface rounded-lg">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-dark truncate">{app.resumeUrl}</p>
-                  <p className="text-xs text-gray-400">Document joint</p>
-                </div>
+              <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+                <h2 className="text-sm font-semibold text-dark">CV joint à la candidature</h2>
+                {cvUrl && (
+                  <div className="flex items-center gap-2">
+                    <a href={cvUrl} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/5 rounded-md hover:bg-primary/10 transition-colors">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Ouvrir
+                    </a>
+                    <a href={cvUrl} download
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-surface rounded-md hover:bg-border/50 transition-colors">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Télécharger
+                    </a>
+                  </div>
+                )}
               </div>
+              {cvUrl ? (
+                <iframe
+                  src={cvUrl}
+                  className="w-full h-[600px] rounded-lg border border-border"
+                  title="CV du candidat"
+                />
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
             </div>
           )}
 

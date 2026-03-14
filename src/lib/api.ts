@@ -29,6 +29,16 @@ function qs(params: Record<string, string | number | boolean | undefined>): stri
   return filtered.length ? '?' + new URLSearchParams(filtered.map(([k, v]) => [k, String(v)])).toString() : '';
 }
 
+/** Extract S3 key from full URL (e.g. https://bucket.s3.region.amazonaws.com/cv/uuid.pdf → cv/uuid.pdf) */
+export function s3KeyFromUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    return u.pathname.slice(1); // remove leading /
+  } catch {
+    return url;
+  }
+}
+
 export const api = {
   jobs: {
     list: (params: Record<string, string | number | boolean | undefined> = {}) =>
@@ -54,6 +64,11 @@ export const api = {
     get: (id: string) => request<Candidate>(`/candidates/${id}`),
     create: (data: Partial<Candidate>) =>
       request<Candidate>('/candidates', { method: 'POST', body: JSON.stringify(data) }),
+  },
+
+  upload: {
+    getSignedUrl: (key: string) =>
+      request<{ url: string }>(`/upload/signed-url?key=${encodeURIComponent(key)}`),
   },
 
   applications: {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
+import { api, s3KeyFromUrl } from "@/lib/api";
 import { AVAILABILITY_LABELS, APPLICATION_STATUS_LABELS, JOB_TYPE_LABELS } from "@/lib/types";
 import type { Candidate, Application, Job } from "@/lib/types";
 
@@ -11,6 +11,7 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cvUrl, setCvUrl] = useState("");
 
   useEffect(() => {
     Promise.all([
@@ -19,6 +20,9 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
     ]).then(([c, apps]) => {
       setCandidate(c);
       setApplications(apps.data);
+      if (c?.resumeUrl) {
+        api.upload.getSignedUrl(s3KeyFromUrl(c.resumeUrl)).then((r) => setCvUrl(r.url)).catch(() => {});
+      }
     }).finally(() => setLoading(false));
   }, [id]);
 
@@ -129,17 +133,47 @@ export default function CandidateDetailPage({ params }: { params: Promise<{ id: 
                     <span className="text-gray-600">Remote uniquement</span>
                   </div>
                 )}
-                {c.resumeUrl && (
+                {c.resumeUrl && cvUrl && (
                   <div className="flex items-center gap-2.5 sm:col-span-2">
                     <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                     </svg>
-                    <span className="text-gray-600 truncate">CV : {c.resumeUrl}</span>
+                    <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Voir le CV</a>
                   </div>
                 )}
               </div>
             </div>
           </div>
+
+          {/* CV */}
+          {c.resumeUrl && cvUrl && (
+            <div className="bg-white border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+                <h2 className="text-sm font-semibold text-dark">Curriculum Vitae</h2>
+                <div className="flex items-center gap-2">
+                  <a href={cvUrl} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/5 rounded-md hover:bg-primary/10 transition-colors">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Ouvrir
+                  </a>
+                  <a href={cvUrl} download
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-surface rounded-md hover:bg-border/50 transition-colors">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Télécharger
+                  </a>
+                </div>
+              </div>
+              <iframe
+                src={cvUrl}
+                className="w-full h-[600px] rounded-lg border border-border"
+                title="CV du candidat"
+              />
+            </div>
+          )}
 
           {/* Résumé */}
           {c.summary && (

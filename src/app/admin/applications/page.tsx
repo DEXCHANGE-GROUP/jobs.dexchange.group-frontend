@@ -2,11 +2,43 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
+import { api, s3KeyFromUrl } from "@/lib/api";
 import { APPLICATION_STATUS_LABELS } from "@/lib/types";
 import type { Application, Job, Candidate, PaginatedResponse } from "@/lib/types";
 
 const ALL_STATUSES = Object.keys(APPLICATION_STATUS_LABELS);
+
+function CvButton({ url, action }: { url: string; action: "view" | "download" }) {
+  const open = async () => {
+    try {
+      const { url: signed } = await api.upload.getSignedUrl(s3KeyFromUrl(url));
+      if (action === "download") {
+        const a = document.createElement("a");
+        a.href = signed;
+        a.download = "";
+        a.click();
+      } else {
+        window.open(signed, "_blank");
+      }
+    } catch { /* ignore */ }
+  };
+  if (action === "view") return (
+    <button onClick={open} className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline" title="Voir le CV">
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      Voir
+    </button>
+  );
+  return (
+    <button onClick={open} className="inline-flex items-center text-xs text-gray-400 hover:text-primary transition-colors" title="Télécharger">
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+    </button>
+  );
+}
 
 export default function AdminApplicationsPage() {
   const [data, setData] = useState<PaginatedResponse<Application> | null>(null);
@@ -130,22 +162,8 @@ export default function AdminApplicationsPage() {
                         <td className="px-6 py-3.5">
                           {app.resumeUrl ? (
                             <div className="flex items-center gap-1.5">
-                              <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline"
-                                title="Voir le CV">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                Voir
-                              </a>
-                              <a href={app.resumeUrl} download
-                                className="inline-flex items-center text-xs text-gray-400 hover:text-primary transition-colors"
-                                title="Télécharger">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                              </a>
+                              <CvButton url={app.resumeUrl} action="view" />
+                              <CvButton url={app.resumeUrl} action="download" />
                             </div>
                           ) : (
                             <span className="text-xs text-gray-300">-</span>
